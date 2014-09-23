@@ -89,7 +89,7 @@ function requestAsset(fqurl) {
   // existing assets have already been requested
   if (fs.existsSync(path)) return;
 
-  return retryingRequest(fqurl, saveResponseBody());
+  return retryingRequest(fqurl, saveResponseBody(path));
 }
 
 function parsePage(body) {
@@ -136,7 +136,7 @@ function requestPage(fqurl) {
     // if savedFilename is a directory and savedPagename exists
     return parsePage(fs.readFileSync(path));
   } else {
-    return retryingRequest(fqurl, receivePage);
+    return retryingRequest(fqurl, receivePage(path));
   }
 }
 
