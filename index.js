@@ -106,9 +106,9 @@ function parsePage(body,pageurl) {
     };
   }
   // TODO: request assets in CSS
-  $('head link').each(requestAttr('href', requestAsset));
-  $('script, body img').each(requestAttr('src', requestAsset));
-  $('body a').each(requestAttr('href', requestPage));
+  $('link').each(requestAttr('href', requestAsset));
+  $('script, img').each(requestAttr('src', requestAsset));
+  $('a').each(requestAttr('href', requestPage));
 }
 
 function receivePage(filename,fqurl) {
