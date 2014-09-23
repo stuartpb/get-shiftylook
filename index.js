@@ -31,9 +31,9 @@ function savedPagename(fqurl) {
   return path.join(savedFilename(fqurl), 'index.html');
 }
 
-function saveResponseBody(path) {
+function saveResponseBody(filename) {
   return function (err, res, body) {
-    fs.writeFileSync(path, body);
+    fs.writeFileSync(filename, body);
   };
 }
 
@@ -80,17 +80,17 @@ function retryingRequest(fqurl, cb) {
 }
 
 function requestAsset(fqurl) {
-  var path = savedFilename(fqurl);
+  var filename = savedFilename(fqurl);
 
   // don't re-request assets
-  if (requested[path]) return;
+  if (requested[filename]) return;
 
-  requested[path] = true;
+  requested[filename] = true;
 
   // existing assets have already been requested
-  if (fs.existsSync(path)) return;
+  if (fs.existsSync(filename)) return;
 
-  return retryingRequest(fqurl, saveResponseBody(path));
+  return retryingRequest(fqurl, saveResponseBody(filename));
 }
 
 function parsePage(body) {
@@ -109,14 +109,14 @@ function parsePage(body) {
   $('body a').each(requestAttr('href', requestPage));
 }
 
-function receivePage(path) {
+function receivePage(filename) {
   return function (err, res, body) {
     parsePage(body);
-    // TODO: path should really be decided more around here -
+    // TODO: filename should really be decided more around here -
     // it's possible a page could hyperlink to non-HTML content
     // Could also do a thing with requesting CSS using this function
-    mkdirp(path.replace(/\/[^\/]*$/,'/'));
-    fs.writeFileSync(path, body);
+    mkdirp.sync(path.dirname(filename));
+    fs.writeFileSync(filename, body);
   };
 }
 
@@ -124,20 +124,20 @@ function requestPage(fqurl) {
   // only request pages within scope
   if (!startsWith(fqurl, scope)) return;
 
-  var path = savedPagename(fqurl);
+  var filename = savedPagename(fqurl);
 
   // don't re-request assets
-  if (requested[path]) return;
+  if (requested[filename]) return;
 
-  requested[path] = true;
+  requested[filename] = true;
 
   // existing pages have already been requested
-  if (fs.existsSync(path)) {
-    // TODO: stat the savedFilename path, and only do this for savedPagename
+  if (fs.existsSync(filename)) {
+    // TODO: stat the savedFilename, and only do this for savedPagename
     // if savedFilename is a directory and savedPagename exists
-    return parsePage(fs.readFileSync(path));
+    return parsePage(fs.readFileSync(filename));
   } else {
-    return retryingRequest(fqurl, receivePage(path));
+    return retryingRequest(fqurl, receivePage(filename));
   }
 }
 
