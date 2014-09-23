@@ -7,6 +7,7 @@ var Bottleneck = require('bottleneck');
 var mkdirp = require('mkdirp');
 var url = require('url');
 var fs = require('fs');
+var path = require('path');
 
 var hostq = new Bottleneck(1, 10000);
 
@@ -23,11 +24,11 @@ function startsWith(s, prefix) {
 }
 
 function savedFilename(fqurl) {
-  return outdir + fqurl.replace(/^https?:\/\//,'');
+  return path.join(outdir, fqurl.replace(/^https?:\/\//,''));
 }
 
 function savedPagename(fqurl) {
-  return savedFilename(fqurl) + '/index.html';
+  return path.join(savedFilename(fqurl), 'index.html');
 }
 
 function saveResponseBody(path) {
@@ -93,15 +94,15 @@ function requestAsset(fqurl) {
 }
 
 function parsePage(body) {
+  var $ = cheerio.load(body);
   function requestAttr(attr, requestor) {
     return function (i, el) {
-      var fqurl = el.attr(attr);
+      var fqurl = $(el).attr(attr);
       if (fqurl) {
         requestor(fqurl);
       }
     };
   }
-  var $ = cheerio.load(body);
   // TODO: request assets in CSS
   $('head link').each(requestAttr('href', requestAsset));
   $('script, body img').each(requestAttr('src', requestAsset));
