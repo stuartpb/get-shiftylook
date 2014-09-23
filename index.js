@@ -18,6 +18,7 @@ var outdir = __dirname + '/results';
 var requested  = new Object(null);
 var errors = new Object(null);
 var retryLimit = 20;
+var recoverableErrors = { ETIMEDOUT: true, ECONNRESET: true, ENOTFOUND: true};
 
 function startsWith(s, prefix) {
   return s.slice(0,prefix.length) == prefix;
@@ -55,10 +56,7 @@ function retryingRequest(fqurl, cb) {
   }
   function retryingCb(err, res, body) {
     if (err) {
-      if ( err.code == 'ETIMEDOUT'
-        || err.code == 'ECONNRESET'
-        || err.code == 'ENOTFOUND' ) {
-
+      if (recoverableErrors[err.code]) {
         retry(err);
       } else {
         console.error('Unrecoverable error for ' + fqurl + ': ', err);
