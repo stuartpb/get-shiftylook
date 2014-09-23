@@ -95,13 +95,13 @@ function requestAsset(fqurl) {
   return retryingRequest(fqurl, saveResponseBody(filename));
 }
 
-function parsePage(body) {
+function parsePage(body,pageurl) {
   var $ = cheerio.load(body);
   function requestAttr(attr, requestor) {
     return function (i, el) {
-      var fqurl = $(el).attr(attr);
-      if (fqurl) {
-        requestor(fqurl);
+      var attrurl = $(el).attr(attr);
+      if (attrurl) {
+        requestor(url.resolve(pageurl, attrurl));
       }
     };
   }
@@ -111,9 +111,9 @@ function parsePage(body) {
   $('body a').each(requestAttr('href', requestPage));
 }
 
-function receivePage(filename) {
+function receivePage(filename,fqurl) {
   return function (err, res, body) {
-    parsePage(body);
+    parsePage(body,fqurl);
     // TODO: filename should really be decided more around here -
     // it's possible a page could hyperlink to non-HTML content
     // Could also do a thing with requesting CSS using this function
@@ -137,9 +137,9 @@ function requestPage(fqurl) {
   if (fs.existsSync(filename)) {
     // TODO: stat the savedFilename, and only do this for savedPagename
     // if savedFilename is a directory and savedPagename exists
-    return parsePage(fs.readFileSync(filename));
+    return parsePage(fs.readFileSync(filename),fqurl);
   } else {
-    return retryingRequest(fqurl, receivePage(filename));
+    return retryingRequest(fqurl, receivePage(filename,fqurl));
   }
 }
 
