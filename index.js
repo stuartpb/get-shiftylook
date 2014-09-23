@@ -76,6 +76,7 @@ function retryingRequest(fqurl, cb) {
   if (/amazonaws\.com$/.test(parsed.hostname)) {
     loudRequest(fqurl, retryingCb);
   } else if (/shiftylook\.com$/.test(parsed.hostname)) {
+    console.log('Queueing request for '+ fqurl);
     hostq.submit(loudRequest, fqurl, retryingCb);
   }
 }
