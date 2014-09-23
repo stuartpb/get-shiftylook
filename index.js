@@ -55,7 +55,10 @@ function retryingRequest(fqurl, cb) {
   }
   function retryingCb(err, res, body) {
     if (err) {
-      if (err.code == 'ETIMEDOUT' || err.code == 'ECONNRESET') {
+      if ( err.code == 'ETIMEDOUT'
+        || err.code == 'ECONNRESET'
+        || err.code == 'ENOTFOUND' ) {
+
         retry(err);
       } else {
         console.error('Unrecoverable error for ' + fqurl + ': ', err);
