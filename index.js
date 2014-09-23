@@ -33,6 +33,7 @@ function savedPagename(fqurl) {
 
 function saveResponseBody(filename) {
   return function (err, res, body) {
+    mkdirp.sync(path.dirname(filename));
     fs.writeFileSync(filename, body);
   };
 }
