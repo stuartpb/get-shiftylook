@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-var request = require('request');
+var requestGet = require('request').get;
 var cheerio = require('cheerio');
 var Bottleneck = require('bottleneck');
 var mkdirp = require('mkdirp');
@@ -38,9 +38,9 @@ function saveResponseBody(filename) {
   };
 }
 
-function loudRequest() {
-  console.log('Requesting '+ arguments[0]);
-  request.apply(this, arguments);
+function request(url, cb) {
+  console.log('Requesting ' + url);
+  requestGet(url, {encoding: null}, cb);
 }
 
 function retryingRequest(fqurl, cb) {
@@ -74,10 +74,10 @@ function retryingRequest(fqurl, cb) {
   }
   var parsed = url.parse(fqurl);
   if (/amazonaws\.com$/.test(parsed.hostname)) {
-    loudRequest(fqurl, retryingCb);
+    request(fqurl, retryingCb);
   } else if (/shiftylook\.com$/.test(parsed.hostname)) {
     console.log('Queueing request for '+ fqurl);
-    hostq.submit(loudRequest, fqurl, retryingCb);
+    hostq.submit(request, fqurl, retryingCb);
   }
 }
 
