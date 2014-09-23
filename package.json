@@ -1,0 +1,26 @@
+{
+  "name": "get-shiftylook",
+  "version": "0.0.0",
+  "description": "A Node.js script to recursively get all the comics on shiftylook.com",
+  "main": "index.js",
+  "dependencies": {
+    "bottleneck": "^1.5.2",
+    "cheerio": "^0.17.0",
+    "mkdirp": "^0.5.0",
+    "request": "^2.44.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stuartpb/get-shiftylook.git"
+  },
+  "author": "Stuart P. Bentley <stuart@testtrack4.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stuartpb/get-shiftylook/issues"
+  },
+  "homepage": "https://github.com/stuartpb/get-shiftylook"
+}
