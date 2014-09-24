@@ -41,7 +41,7 @@ function saveResponseBody(filename) {
 
 function request(url, cb) {
   console.log('Requesting ' + url);
-  requestGet(url, {encoding: null}, cb);
+  requestGet(encodeURI(url).replace(/%25/g,'%'), {encoding: null}, cb);
 }
 
 function retryingRequest(fqurl, cb) {
